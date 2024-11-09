@@ -1,0 +1,29 @@
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+
+# وظيفة البداية التي ترسل رسالة ترحيبية
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text("مرحبًا! أضفني إلى قناتك أو مجموعتك لإدارة المنشورات وحذف الروابط.")
+
+# وظيفة لحذف الرسائل التي تحتوي على روابط
+def delete_links(update: Update, context: CallbackContext) -> None:
+    if "http" in update.message.text or "www" in update.message.text:
+        update.message.delete()
+
+# الوظيفة الرئيسية لتشغيل البوت
+def main():
+    TOKEN = "ضع_التوكن_هنا"  # ضع التوكن الخاص بك هنا
+
+    updater = Updater(TOKEN)
+    dispatcher = updater.dispatcher
+
+    # تعريف الأوامر
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, delete_links))
+
+    # بدء البوت
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == "__main__":
+    main()
